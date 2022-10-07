@@ -3,8 +3,8 @@ package event
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/nats-io/go-nats"
-	"textBoard/schema"
+	"github.com/avgalaida/textBoard/schema"
+	"github.com/nats-io/nats.go"
 )
 
 type NatsEventStore struct {

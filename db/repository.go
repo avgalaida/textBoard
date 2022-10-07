@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"textBoard/schema"
+	"github.com/avgalaida/textBoard/schema"
 )
 
 type Repository interface {
@@ -10,8 +10,6 @@ type Repository interface {
 	InsertPost(ctx context.Context, post schema.Post) error
 	ListPosts(ctx context.Context, skip uint64, take uint64) ([]schema.Post, error)
 }
-
-// Инверсия управления
 
 var impl Repository
 

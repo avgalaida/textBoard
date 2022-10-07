@@ -1,6 +1,6 @@
 package event
 
-import "textBoard/schema"
+import "github.com/avgalaida/textBoard/schema"
 
 type EventStore interface {
 	Close()

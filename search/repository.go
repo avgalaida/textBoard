@@ -2,7 +2,7 @@ package search
 
 import (
 	"context"
-	"textBoard/schema"
+	"github.com/avgalaida/textBoard/schema"
 )
 
 type Repository interface {
