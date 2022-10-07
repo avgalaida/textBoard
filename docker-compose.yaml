@@ -11,3 +11,9 @@ services:
   nats:
     image: "nats-streaming:latest"
     restart: "always"
+  elasticsearch:
+    image: "elasticsearch:8.4.3"
+    ports:
+      - "9200:9200"
+    environment:
+      - "discovery.type=single-node"
