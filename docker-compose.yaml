@@ -8,3 +8,6 @@ services:
       POSTGRES_DB: "textboard"
       POSTGRES_USER: "poster"
       POSTGRES_PASSWORD: "qwerty"
+  nats:
+    image: "nats-streaming:latest"
+    restart: "always"
