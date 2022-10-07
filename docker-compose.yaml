@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  postgres:
+    build: "./postgres"
+    restart: "always"
+    environment:
+      POSTGRES_DB: "textboard"
+      POSTGRES_USER: "poster"
+      POSTGRES_PASSWORD: "qwerty"
