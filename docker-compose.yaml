@@ -53,3 +53,11 @@ services:
       - "9200:9200"
     environment:
       - "discovery.type=single-node"
+  nginx:
+    build: "./nginx"
+    ports:
+      - "8080:80"
+    depends_on:
+      - "post"
+      - "query"
+      - "pusher"
