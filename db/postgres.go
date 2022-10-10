@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/avgalaida/textBoard/schema"
+	_ "github.com/lib/pq"
 )
 
 type PostgresRepository struct {
