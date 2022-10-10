@@ -1,7 +1,8 @@
 FROM golang:1.19-alpine3.16 AS build
 RUN apk --no-cache add gcc g++ make ca-certificates
-WORKDIR /go/src/textBoard
-#./
+WORKDIR /go/src/app
+
+COPY go.mod go.sum ./
 COPY util util
 COPY event event
 COPY db db
@@ -11,8 +12,8 @@ COPY post-service post-service
 COPY query-service query-service
 COPY pusher-service pusher-service
 
-RUN go install ./...
+RUN GO111MODULE=on go install ./...
 
-FROM alpine3.16
+FROM alpine:3.16
 WORKDIR /usr/bin
 COPY --from=build /go/bin .
