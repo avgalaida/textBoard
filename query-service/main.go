@@ -23,10 +23,11 @@ type Config struct {
 
 func newRouter() (router *mux.Router) {
 	router = mux.NewRouter()
-	router.HandleFunc("/posts", listPostsHandler).
-		Methods("GET")
+	router.HandleFunc("/meows", listPostsHandler).
+		Methods(http.MethodGet)
 	router.HandleFunc("/search", searchPostsHandler).
-		Methods("GET")
+		Methods(http.MethodGet)
+	router.Use(mux.CORSMethodMiddleware(router))
 	return
 }
 

@@ -87,7 +87,7 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request) {
 	posts, err := db.ListPosts(ctx, skip, take)
 	if err != nil {
 		log.Println(err)
-		util.ResponseError(w, http.StatusInternalServerError, "Could not fetch posts")
+		util.ResponseError(w, http.StatusInternalServerError, "Could not fetch meows")
 		return
 	}
 
