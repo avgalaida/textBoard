@@ -22,20 +22,11 @@ type Config struct {
 func newRouter() (router *mux.Router) {
 	router = mux.NewRouter()
 	router.HandleFunc("/posts", createPostHandler).
-		Methods("POST").
+		Methods(http.MethodPost).
 		Queries("body", "{body}")
+	router.Use(mux.CORSMethodMiddleware(router))
 	return
 }
-
-//
-//func newRouter() (router *mux.Router) {
-//	router = mux.NewRouter()
-//	router.HandleFunc("/posts", createPostHandler).
-//		Methods(http.MethodPost).
-//		Queries("body", "{body}")
-//	router.Use(mux.CORSMethodMiddleware(router))
-//	return
-//}
 
 func main() {
 	var cfg Config
@@ -71,5 +62,4 @@ func main() {
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)
 	}
-
 }
