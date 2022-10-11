@@ -1,11 +1,12 @@
 package search
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/avgalaida/textBoard/schema"
-	"github.com/olivere/elastic"
-	"log"
+	elastic "github.com/elastic/go-elasticsearch/v8"
 )
 
 type ElasticRepository struct {
@@ -13,10 +14,13 @@ type ElasticRepository struct {
 }
 
 func NewElastic(url string) (*ElasticRepository, error) {
-	client, err := elastic.NewClient(
-		elastic.SetURL(url),
-		elastic.SetSniff(false),
-	)
+	client, err := elastic.NewClient(elastic.Config{
+		Addresses: []string{url},
+	})
+	if err != nil {
+		return nil, err
+	}
+	_, err = client.Info()
 	if err != nil {
 		return nil, err
 	}
@@ -27,38 +31,70 @@ func (r *ElasticRepository) Close() {
 }
 
 func (r *ElasticRepository) InsertPost(ctx context.Context, post schema.Post) error {
-	_, err := r.client.Index().
-		Index("posts").
-		Type("post").
-		Id(post.ID).
-		BodyJson(post).
-		Refresh("wait_for").
-		Do(ctx)
+	body, _ := json.Marshal(post)
+	_, err := r.client.Index(
+		"posts",
+		bytes.NewReader(body),
+		r.client.Index.WithDocumentID(post.ID),
+		r.client.Index.WithRefresh("wait_for"),
+	)
 	return err
 }
 
-func (r *ElasticRepository) SearchPosts(ctx context.Context, query string, skip uint64, take uint64) ([]schema.Post, error) {
-	result, err := r.client.Search().
-		Index("posts").
-		Query(
-			elastic.NewMultiMatchQuery(query, "body").
-				Fuzziness("3").
-				PrefixLength(1).
-				CutoffFrequency(0.0001),
-		).
-		From(int(skip)).
-		Size(int(take)).
-		Do(ctx)
+func (r *ElasticRepository) SearchPosts(ctx context.Context, query string, skip uint64, take uint64) (result []schema.Post, err error) {
+	var buf bytes.Buffer
+	reqBody := map[string]interface{}{
+		"query": map[string]interface{}{
+			"multi_match": map[string]interface{}{
+				"query":            query,
+				"fields":           []string{"body"},
+				"fuzziness":        3,
+				"cutoff_frequency": 0.0001,
+			},
+		},
+	}
+	if err = json.NewEncoder(&buf).Encode(reqBody); err != nil {
+		return nil, err
+	}
+
+	res, err := r.client.Search(
+		r.client.Search.WithContext(ctx),
+		r.client.Search.WithIndex("posts"),
+		r.client.Search.WithFrom(int(skip)),
+		r.client.Search.WithSize(int(take)),
+		r.client.Search.WithBody(&buf),
+		r.client.Search.WithTrackTotalHits(true),
+	)
 	if err != nil {
 		return nil, err
 	}
-	posts := []schema.Post{}
-	for _, hit := range result.Hits.Hits {
-		var post schema.Post
-		if err = json.Unmarshal(*hit.Source, &post); err != nil {
-			log.Println(err)
+	defer func() {
+		if err = res.Body.Close(); err != nil {
+			result = nil
 		}
-		posts = append(posts, post)
+	}()
+	if res.IsError() {
+		return nil, errors.New("search failed")
+	}
+
+	type Response struct {
+		Took int64
+		Hits struct {
+			Total struct {
+				Value int64
+			}
+			Hits []*struct {
+				Source schema.Post `json:"_source"`
+			}
+		}
+	}
+	resBody := Response{}
+	if err := json.NewDecoder(res.Body).Decode(&resBody); err != nil {
+		return nil, err
+	}
+	var posts []schema.Post
+	for _, hit := range resBody.Hits.Hits {
+		posts = append(posts, hit.Source)
 	}
 	return posts, nil
 }
