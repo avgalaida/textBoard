@@ -19,11 +19,20 @@ type Config struct {
 	NatsAddress      string `envconfig:"NATS_ADDRESS"`
 }
 
+//func newRouter() (router *mux.Router) {
+//	router = mux.NewRouter()
+//	router.HandleFunc("/posts", createPostHandler).
+//		Methods("POST").
+//		Queries("body", "{body}")
+//	return
+//}
+
 func newRouter() (router *mux.Router) {
 	router = mux.NewRouter()
 	router.HandleFunc("/posts", createPostHandler).
-		Methods("POST").
+		Methods(http.MethodPost).
 		Queries("body", "{body}")
+	router.Use(mux.CORSMethodMiddleware(router))
 	return
 }
 
