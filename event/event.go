@@ -2,16 +2,16 @@ package event
 
 import "github.com/avgalaida/textBoard/schema"
 
-type EventStore interface {
+type Store interface {
 	Close()
 	PublishPostCreated(post schema.Post) error
 	SubscribePostCreated() (<-chan PostCreatedMessage, error)
 	OnPostCreated(f func(PostCreatedMessage)) error
 }
 
-var impl EventStore
+var impl Store
 
-func SetEventStore(es EventStore) {
+func SetEventStore(es Store) {
 	impl = es
 }
 
