@@ -23,6 +23,11 @@
     "@vue/cli-service": "~5.0.0",
     "vue-template-compiler": "^2.6.14"
   },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",
