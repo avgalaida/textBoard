@@ -2,9 +2,9 @@
   <div>
     <form v-on:submit.prevent="createPost">
       <div class="input-group">
-        <input v-model.trim="postBody" type="text" class="form-control" placeholder="What's happening?">
+        <input v-model.trim="postBody" type="text" class="form-control" placeholder="Что нового?">
         <div class="input-group-append">
-          <button class="btn btn-primary" type="submit">Post</button>
+          <button class="btn btn-primary" type="submit">Отправить</button>
         </div>
       </div>
     </form>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input @keyup="searchPosts" v-model.trim="query" class="form-control" placeholder="Search...">
+    <input @keyup="searchPosts" v-model.trim="query" class="form-control" placeholder="Найти...">
     <div class="mt-4">
       <Post v-for="post in posts" :key="post.id" :post="post" />
     </div>
