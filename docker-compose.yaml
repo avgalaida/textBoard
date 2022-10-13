@@ -48,13 +48,11 @@ services:
     image: "nats-streaming:latest"
     restart: "always"
   elasticsearch:
-    image: "elasticsearch:8.4.3"
+    image: "elasticsearch:7.6.0"
     ports:
       - "9200:9200"
     environment:
       - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
-      - "xpack.security.enabled=false"
   nginx:
     build: "./nginx"
     ports:

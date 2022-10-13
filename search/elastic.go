@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/avgalaida/textBoard/schema"
-	elastic "github.com/elastic/go-elasticsearch/v8"
+	elastic "github.com/elastic/go-elasticsearch/v7"
 )
 
 type ElasticRepository struct {
