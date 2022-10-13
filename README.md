@@ -5,5 +5,6 @@ docker-compose up -d --build
 
 cd frontend 
 
-yarn serve
+npm install
 
+yarn serve
